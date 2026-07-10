@@ -1,0 +1,46 @@
+# ==========================================
+# AI Infrastructure Resilience - Docker Compose Configuration
+# Orchestrates FastAPI services, PostgreSQL + PostGIS datastores, and Nginx.
+# ==========================================
+
+version: '3.8'
+
+services:
+  # Database Service
+  db:
+    image: postgis/postgis:14-3.2
+    container_name: resilience_db
+    restart: always
+    environment:
+      POSTGRES_USER: resilience_user
+      POSTGRES_PASSWORD: secure_db_password_992
+      POSTGRES_DB: resilience_control
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ../database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U resilience_user -d resilience_control"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Full-Stack Application Service
+  app:
+    build:
+      context: ../
+      dockerfile: deployment/Dockerfile
+    container_name: resilience_app
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://resilience_user:secure_db_password_992@db:5432/resilience_control
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  postgres_data:

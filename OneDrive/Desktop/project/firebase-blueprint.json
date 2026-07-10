@@ -1,0 +1,73 @@
+{
+  "entities": {
+    "User": {
+      "title": "User Profile",
+      "description": "User account registration with clearance level roles.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string", "enum": ["Super Admin", "Disaster Management Authority", "NGO", "Shelter Manager", "Volunteer", "Public User"] },
+        "avatar": { "type": "string" },
+        "organization": { "type": "string" },
+        "active": { "type": "boolean" },
+        "phone": { "type": "string" }
+      },
+      "required": ["id", "name", "email", "role", "active"]
+    },
+    "Disaster": {
+      "title": "Disaster Event",
+      "description": "Information about an active or resolved disaster.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "type": { "type": "string" },
+        "severity": { "type": "string" },
+        "location": { "type": "string" },
+        "affected": { "type": "integer" },
+        "startDate": { "type": "string" },
+        "status": { "type": "string" },
+        "description": { "type": "string" },
+        "coordinates": { "type": "object" }
+      },
+      "required": ["id", "title", "type", "severity", "location", "status"]
+    },
+    "Shelter": {
+      "title": "Shelter Hub",
+      "description": "Logistics and occupancy details of local relief shelters.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "capacity": { "type": "integer" },
+        "occupancy": { "type": "integer" },
+        "availableBeds": { "type": "integer" },
+        "medicalFacilities": { "type": "boolean" },
+        "foodAvailability": { "type": "boolean" },
+        "waterAvailability": { "type": "boolean" },
+        "electricity": { "type": "boolean" },
+        "contact": { "type": "string" },
+        "location": { "type": "string" },
+        "coordinates": { "type": "object" },
+        "status": { "type": "string" }
+      },
+      "required": ["id", "name", "capacity", "occupancy", "availableBeds", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "User",
+      "description": "Registers authorized profiles with access roles."
+    },
+    "/disasters/{disasterId}": {
+      "schema": "Disaster",
+      "description": "Active natural disasters list."
+    },
+    "/shelters/{shelterId}": {
+      "schema": "Shelter",
+      "description": "Locations for temporary displacement housing."
+    }
+  }
+}
