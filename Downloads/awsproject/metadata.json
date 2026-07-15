@@ -1,0 +1,6 @@
+{
+  "name": "AI Infrastructure Resilience Control Room",
+  "description": "An enterprise-grade Digital Twin simulation and AI predictive analytics system for modeling, analyzing, and mitigating critical infrastructure failure risks.",
+  "requestFramePermissions": ["geolocation", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
