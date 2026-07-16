@@ -35,13 +35,15 @@ export const VoiceAssistant: React.FC = () => {
     ngos, 
     deliveries, 
     currentUser, 
-    setPath 
+    setPath,
+    getAIRecommendation
   } = useApp();
 
   const [isOpen, setIsOpen] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [commandText, setCommandText] = useState('');
+  const [isProcessingAI, setIsProcessingAI] = useState(false);
   const [chatLog, setChatLog] = useState<ChatLogItem[]>([
     {
       id: 'welcome',
@@ -160,13 +162,66 @@ export const VoiceAssistant: React.FC = () => {
     setChatLog(prev => [...prev, newItem]);
   };
 
-  const processCommand = (rawText: string) => {
+  const processCommand = async (rawText: string) => {
     const text = rawText.toLowerCase().trim();
     if (!text) return;
 
     let response = "";
 
-    if (text.includes('disaster') || text.includes('incident') || text.includes('emergency')) {
+    // Navigation commands
+    if (text.includes('go to settings') || text.includes('open settings') || text.includes('show settings')) {
+      response = "Navigating to system settings and profile management.";
+      setPath('settings');
+    } else if (text.includes('go to disasters') || text.includes('open disasters') || text.includes('show disasters')) {
+      response = "Opening disaster logs and threat reports.";
+      setPath('disasters');
+    } else if (text.includes('go to shelters') || text.includes('open shelters') || text.includes('show shelters')) {
+      response = "Navigating to regional shelter registry.";
+      setPath('shelters');
+    } else if (text.includes('go to volunteers') || text.includes('open volunteers') || text.includes('show volunteers')) {
+      response = "Opening field responder rosters.";
+      setPath('volunteers');
+    } else if (text.includes('go to dashboard') || text.includes('open dashboard') || text.includes('show dashboard')) {
+      response = "Returning to operations dashboard.";
+      setPath('dashboard');
+    } 
+    // Profile commands
+    else if (text.includes('who are you') || text.includes('what is this') || text.includes('your name')) {
+      response = "I am the Smart Relief Voice Operations Console. Speak commands like 'check shelter status' or 'go to settings' to coordinate relief.";
+    } else if (text.includes('who am i') || text.includes('my profile') || text.includes('my role')) {
+      if (currentUser) {
+        response = `You are authenticated as ${currentUser.name}, holding the role of ${currentUser.role} within ${currentUser.organization || 'Independent Operations'}.`;
+      } else {
+        response = "Your credential registry is currently offline. Please check authentication.";
+      }
+    }
+    // Help commands
+    else if (text.includes('help') || text.includes('what can i say') || text.includes('commands')) {
+      response = "Try saying: 'What is the system status?', 'Check shelter occupancy', 'Show volunteer roster', 'Who am I?', 'Analyze disaster impact', or 'Go to settings'.";
+    }
+    // AI-powered analysis commands
+    else if (text.includes('analyze') || text.includes('recommend') || text.includes('predict') || text.includes('ai') || text.includes('smart')) {
+      if (disasters.length > 0) {
+        setIsProcessingAI(true);
+        try {
+          const aiResponse = await getAIRecommendation(disasters[0]);
+          if (aiResponse && aiResponse.recommendation) {
+            response = aiResponse.recommendation;
+          } else {
+            response = "AI analysis is currently unavailable. Please check your system configuration.";
+          }
+        } catch (error) {
+          console.error('AI processing error:', error);
+          response = "I encountered an error processing your AI request. Please try again.";
+        } finally {
+          setIsProcessingAI(false);
+        }
+      } else {
+        response = "No active disasters found for AI analysis. Please declare a disaster first.";
+      }
+    }
+    // Quick status commands
+    else if (text.includes('disaster') || text.includes('incident') || text.includes('emergency')) {
       const count = disasters.length;
       if (count === 0) {
         response = "There are currently no active disasters registered in the emergency console.";
@@ -195,31 +250,6 @@ export const VoiceAssistant: React.FC = () => {
       const activeShelters = shelters.filter(s => s.status === 'Active').length;
       const activeVolunteers = volunteers.filter(v => v.availability === 'Available').length;
       response = `Emergency status summary. We are monitoring ${disastersCount} incidents. There are ${activeShelters} active shelters and ${activeVolunteers} volunteers ready for dispatch.`;
-    } else if (text.includes('who are you') || text.includes('what is this') || text.includes('your name')) {
-      response = "I am the Smart Relief Voice Operations Console. Speak commands like 'check shelter status' or 'go to settings' to coordinate relief.";
-    } else if (text.includes('who am i') || text.includes('my profile') || text.includes('my role')) {
-      if (currentUser) {
-        response = `You are authenticated as ${currentUser.name}, holding the role of ${currentUser.role} within ${currentUser.organization || 'Independent Operations'}.`;
-      } else {
-        response = "Your credential registry is currently offline. Please check authentication.";
-      }
-    } else if (text.includes('go to settings') || text.includes('open settings') || text.includes('show settings')) {
-      response = "Navigating to system settings and profile management.";
-      setPath('settings');
-    } else if (text.includes('go to disasters') || text.includes('open disasters') || text.includes('show disasters')) {
-      response = "Opening disaster logs and threat reports.";
-      setPath('disasters');
-    } else if (text.includes('go to shelters') || text.includes('open shelters') || text.includes('show shelters')) {
-      response = "Navigating to regional shelter registry.";
-      setPath('shelters');
-    } else if (text.includes('go to volunteers') || text.includes('open volunteers') || text.includes('show volunteers')) {
-      response = "Opening field responder rosters.";
-      setPath('volunteers');
-    } else if (text.includes('go to dashboard') || text.includes('open dashboard') || text.includes('show dashboard')) {
-      response = "Returning to operations dashboard.";
-      setPath('dashboard');
-    } else if (text.includes('help') || text.includes('what can i say') || text.includes('commands')) {
-      response = "Try saying: 'What is the system status?', 'Check shelter occupancy', 'Show volunteer roster', 'Who am I?', or 'Go to settings'.";
     } else {
       response = `Command recognized: "${rawText}". Say 'help' to review supported operations.`;
     }
@@ -267,10 +297,10 @@ export const VoiceAssistant: React.FC = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 30 }}
             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="w-80 md:w-96 bg-white/95 backdrop-blur-md border border-slate-200 rounded-2xl shadow-2xl overflow-hidden mb-4 flex flex-col"
+            className="w-80 md:w-96 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border border-slate-200 dark:border-slate-700 rounded-2xl shadow-2xl overflow-hidden mb-4 flex flex-col"
           >
             {/* Header */}
-            <div className="bg-slate-900 px-4 py-3 text-white flex items-center justify-between">
+            <div className="bg-slate-900 dark:bg-slate-950 px-4 py-3 text-white flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <div className={`p-1 bg-rose-600 rounded-md ${isListening ? 'animate-pulse' : ''}`}>
                   <Mic className="h-4 w-4 text-white" />
@@ -301,14 +331,14 @@ export const VoiceAssistant: React.FC = () => {
 
             {/* Error Notification */}
             {errorMsg && (
-              <div className="bg-amber-50 text-amber-900 border-b border-amber-200 text-[10px] px-3.5 py-2 font-semibold flex items-center space-x-1.5">
-                <Info className="h-3.5 w-3.5 text-amber-600 flex-shrink-0" />
+              <div className="bg-amber-50 dark:bg-amber-900/20 text-amber-900 dark:text-amber-300 border-b border-amber-200 dark:border-amber-800 text-[10px] px-3.5 py-2 font-semibold flex items-center space-x-1.5">
+                <Info className="h-3.5 w-3.5 text-amber-600 dark:text-amber-400 flex-shrink-0" />
                 <span className="leading-tight">{errorMsg}</span>
               </div>
             )}
 
             {/* Chat Display Log */}
-            <div className="p-4 flex-1 h-64 overflow-y-auto space-y-3 bg-slate-50/50">
+            <div className="p-4 flex-1 h-64 overflow-y-auto space-y-3 bg-slate-50/50 dark:bg-slate-900/30">
               {chatLog.map(item => (
                 <div
                   key={item.id}
@@ -318,12 +348,12 @@ export const VoiceAssistant: React.FC = () => {
                     className={`max-w-[85%] rounded-xl px-3 py-2.5 text-xs shadow-sm ${
                       item.sender === 'User'
                         ? 'bg-rose-600 text-white rounded-tr-none font-sans font-medium'
-                        : 'bg-white text-slate-800 border border-slate-150 rounded-tl-none font-sans font-normal leading-relaxed'
+                        : 'bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-150 dark:border-slate-600 rounded-tl-none font-sans font-normal leading-relaxed'
                     }`}
                   >
                     <p>{item.text}</p>
                     <span className={`text-[8px] mt-1 block text-right leading-none ${
-                      item.sender === 'User' ? 'text-rose-200' : 'text-slate-400'
+                      item.sender === 'User' ? 'text-rose-200' : 'text-slate-400 dark:text-slate-500'
                     }`}>
                       {item.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                     </span>
@@ -335,8 +365,8 @@ export const VoiceAssistant: React.FC = () => {
 
             {/* Glowing wave pattern when listening */}
             {isListening && (
-              <div className="px-4 py-2 bg-rose-50 border-y border-rose-100 flex items-center justify-between">
-                <span className="text-[10px] font-bold font-mono text-rose-700 animate-pulse">
+              <div className="px-4 py-2 bg-rose-50 dark:bg-rose-900/20 border-y border-rose-100 dark:border-rose-800 flex items-center justify-between">
+                <span className="text-[10px] font-bold font-mono text-rose-700 dark:text-rose-400 animate-pulse">
                   SPEAK NOW...
                 </span>
                 <div className="flex items-center space-x-0.5">
@@ -350,12 +380,12 @@ export const VoiceAssistant: React.FC = () => {
             )}
 
             {/* Quick Suggestions Badges */}
-            <div className="p-3 bg-white border-t border-slate-100 flex flex-wrap gap-1.5 justify-center">
+            <div className="p-3 bg-white dark:bg-slate-800 border-t border-slate-100 dark:border-slate-700 flex flex-wrap gap-1.5 justify-center">
               {suggestions.map((s, idx) => (
                 <button
                   key={idx}
                   onClick={() => handleSuggestionClick(s)}
-                  className="text-[9px] font-semibold text-slate-600 hover:text-rose-700 bg-slate-100 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 px-2.5 py-1 rounded-full cursor-pointer transition-all"
+                  className="text-[9px] font-semibold text-slate-600 dark:text-slate-400 hover:text-rose-700 dark:hover:text-rose-400 bg-slate-100 dark:bg-slate-700 hover:bg-rose-50 dark:hover:bg-rose-900/20 border border-slate-200 dark:border-slate-600 hover:border-rose-200 dark:hover:border-rose-800 px-2.5 py-1 rounded-full cursor-pointer transition-all"
                 >
                   {s}
                 </button>
@@ -363,14 +393,14 @@ export const VoiceAssistant: React.FC = () => {
             </div>
 
             {/* Command Text Input Area */}
-            <form onSubmit={handleTextSubmit} className="p-3 bg-slate-50 border-t border-slate-150 flex items-center space-x-2">
+            <form onSubmit={handleTextSubmit} className="p-3 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-150 dark:border-slate-700 flex items-center space-x-2">
               <button
                 type="button"
                 onClick={toggleListening}
                 className={`p-2.5 rounded-xl border flex items-center justify-center transition-all cursor-pointer ${
                   isListening
                     ? 'bg-rose-600 hover:bg-rose-700 text-white border-rose-700 animate-pulse'
-                    : 'bg-white hover:bg-slate-50 text-slate-600 border-slate-200 shadow-sm'
+                    : 'bg-white dark:bg-slate-700 hover:bg-slate-50 dark:hover:bg-slate-600 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-600 shadow-sm'
                 }`}
                 title={isListening ? "Stop listening" : "Start speaking"}
               >
@@ -382,13 +412,13 @@ export const VoiceAssistant: React.FC = () => {
                 value={commandText}
                 onChange={(e) => setCommandText(e.target.value)}
                 placeholder="Ask about disasters, shelters..."
-                className="flex-1 px-3 py-2 text-xs border border-slate-200 rounded-xl focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 bg-white text-slate-800 shadow-inner"
+                className="flex-1 px-3 py-2 text-xs border border-slate-200 dark:border-slate-600 rounded-xl focus:outline-none focus:border-rose-500 dark:focus:border-rose-500 focus:ring-1 focus:ring-rose-500 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-200 shadow-inner"
               />
 
               <button
                 type="submit"
                 disabled={!commandText.trim()}
-                className="p-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 disabled:opacity-50 text-white flex items-center justify-center cursor-pointer shadow"
+                className="p-2.5 rounded-xl bg-slate-900 dark:bg-slate-950 hover:bg-slate-800 dark:hover:bg-slate-900 disabled:opacity-50 text-white flex items-center justify-center cursor-pointer shadow"
               >
                 <CornerDownLeft className="h-3.5 w-3.5" />
               </button>

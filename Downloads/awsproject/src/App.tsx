@@ -18,6 +18,7 @@ import { Deliveries } from './pages/Deliveries';
 import { Settings } from './pages/Settings';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
+import { VoiceAssistant } from './components/VoiceAssistant';
 
 const AppContent: React.FC = () => {
   const { path, currentUser } = useApp();
@@ -41,7 +42,7 @@ const AppContent: React.FC = () => {
 
   // 4. Render Authorized Operational Console Layout
   return (
-    <div className="flex bg-slate-50 min-h-screen font-sans overflow-hidden">
+    <div className="flex bg-slate-50 dark:bg-slate-950 min-h-screen font-sans overflow-hidden">
       {/* Persistent Left Sidebar */}
       <Sidebar collapsed={sidebarCollapsed} setCollapsed={setSidebarCollapsed} />
 
@@ -69,6 +70,9 @@ const AppContent: React.FC = () => {
           {path === 'settings' && <Settings />}
         </main>
       </div>
+
+      {/* Voice Assistant */}
+      <VoiceAssistant />
     </div>
   );
 };

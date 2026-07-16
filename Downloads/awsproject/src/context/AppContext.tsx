@@ -34,6 +34,10 @@ interface AppContextType {
   registerUser: (name: string, email: string, password?: string, role?: UserRole, org?: string) => Promise<boolean>;
   updateUserProfile: (updatedData: Partial<User>) => Promise<void>;
 
+  // Theme
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
+
   // Collections State
   disasters: Disaster[];
   shelters: Shelter[];
@@ -100,6 +104,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [currentPath, setPath] = useState<string>('landing');
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    const saved = localStorage.getItem('theme');
+    return saved === 'dark' ? 'dark' : 'light';
+  });
 
   // Core collections state
   const [disasters, setDisasters] = useState<Disaster[]>([]);
@@ -111,6 +119,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [deliveries, setDeliveries] = useState<Delivery[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
+
+  // Apply theme to document
+  useEffect(() => {
+    const root = document.documentElement;
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    localStorage.setItem('theme', theme);
+  }, [theme]);
 
   // Load configuration and seed database on initialization
   useEffect(() => {
@@ -330,6 +349,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.error('Failed to update user profile:', error);
       throw error;
     }
+  };
+
+  const toggleTheme = () => {
+    setTheme(prev => prev === 'light' ? 'dark' : 'light');
   };
 
   // --- DISASTER WORKFLOWS ---
@@ -718,6 +741,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       logout,
       registerUser,
       updateUserProfile,
+
+      theme,
+      toggleTheme,
 
       disasters,
       shelters,

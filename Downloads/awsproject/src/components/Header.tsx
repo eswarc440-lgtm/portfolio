@@ -15,7 +15,9 @@ import {
   Clock,
   Briefcase,
   Layers,
-  MapPin
+  MapPin,
+  Moon,
+  Sun
 } from 'lucide-react';
 import { UserRole } from '../types';
 
@@ -28,7 +30,9 @@ export const Header: React.FC = () => {
     notifications, 
     disasters,
     refreshAllData,
-    isLoading
+    isLoading,
+    theme,
+    toggleTheme
   } = useApp();
 
   const [notifOpen, setNotifOpen] = useState(false);
@@ -76,7 +80,7 @@ export const Header: React.FC = () => {
   ];
 
   return (
-    <header className="bg-white border-b border-slate-200 h-16 px-6 flex items-center justify-between sticky top-0 z-20">
+    <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 h-16 px-6 flex items-center justify-between sticky top-0 z-20">
       {/* Breadcrumb Navigation */}
       <div className="flex items-center space-x-2">
         <div className="flex items-center text-xs font-mono text-slate-400">
@@ -135,48 +139,62 @@ export const Header: React.FC = () => {
           <input 
             type="text" 
             placeholder="Search assets, requests, vectors..."
-            className="w-full bg-slate-100 hover:bg-slate-150/70 focus:bg-white text-xs text-slate-700 placeholder-slate-400 border border-transparent focus:border-slate-300 rounded-lg py-1.5 pl-9 pr-3 transition-all focus:outline-none focus:ring-1 focus:ring-slate-300"
+            className="w-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-150/70 dark:hover:bg-slate-700 focus:bg-white dark:focus:bg-slate-900 text-xs text-slate-700 dark:text-slate-300 placeholder-slate-400 dark:placeholder-slate-500 border border-transparent focus:border-slate-300 dark:focus:border-slate-600 rounded-lg py-1.5 pl-9 pr-3 transition-all focus:outline-none focus:ring-1 focus:ring-slate-300 dark:focus:ring-slate-600"
           />
         </div>
+
+        {/* Theme Toggle Button */}
+        <button 
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            toggleTheme();
+          }}
+          className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-colors focus:outline-none focus:ring-2 focus:ring-slate-300 dark:focus:ring-slate-600"
+          title={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+          type="button"
+        >
+          {theme === 'light' ? <Moon className="h-4.5 w-4.5" /> : <Sun className="h-4.5 w-4.5" />}
+        </button>
 
         {/* Notifications Icon with Indicator */}
         <div className="relative">
           <button 
             onClick={() => { setNotifOpen(!notifOpen); setProfileOpen(false); }}
-            className="p-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-950 transition-colors focus:outline-none relative"
+            className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 hover:text-slate-950 dark:hover:text-white transition-colors focus:outline-none relative"
           >
             <Bell className="h-4.5 w-4.5" />
             {activeNotifications.length > 0 && (
-              <span className="absolute top-0.5 right-0.5 h-2 w-2 rounded-full bg-rose-600 ring-2 ring-white animate-pulse"></span>
+              <span className="absolute top-0.5 right-0.5 h-2 w-2 rounded-full bg-rose-600 ring-2 ring-white dark:ring-slate-900 animate-pulse"></span>
             )}
           </button>
 
           {notifOpen && (
-            <div className="absolute right-0 mt-2 w-80 bg-white border border-slate-200 rounded-xl shadow-xl z-40 overflow-hidden animate-in fade-in-50 duration-150">
-              <div className="p-3 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
-                <h3 className="text-xs font-bold text-slate-900 tracking-tight flex items-center space-x-1.5">
+            <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-40 overflow-hidden animate-in fade-in-50 duration-150">
+              <div className="p-3 bg-slate-50 dark:bg-slate-700/50 border-b border-slate-100 dark:border-slate-600 flex justify-between items-center">
+                <h3 className="text-xs font-bold text-slate-900 dark:text-slate-100 tracking-tight flex items-center space-x-1.5">
                   <span>Emergency Alert Center</span>
                   {activeNotifications.length > 0 && (
-                    <span className="bg-rose-100 text-rose-700 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                    <span className="bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 text-[10px] px-1.5 py-0.5 rounded-full font-bold">
                       {activeNotifications.length} Active
                     </span>
                   )}
                 </h3>
                 <button 
                   onClick={() => refreshAllData()}
-                  className="text-[10px] text-slate-500 hover:text-rose-600 font-medium font-sans"
+                  className="text-[10px] text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 font-medium font-sans"
                 >
                   Refresh Data
                 </button>
               </div>
-              <div className="max-h-80 overflow-y-auto divide-y divide-slate-100">
+              <div className="max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-700">
                 {notifications.length === 0 ? (
-                  <div className="p-4 text-center text-xs text-slate-400">
+                  <div className="p-4 text-center text-xs text-slate-400 dark:text-slate-500">
                     No notifications reported in local sector.
                   </div>
                 ) : (
                   notifications.map(n => (
-                    <div key={n.id} className={`p-3 hover:bg-slate-50/70 transition-colors ${!n.read ? 'bg-rose-50/15' : ''}`}>
+                    <div key={n.id} className={`p-3 hover:bg-slate-50/70 dark:hover:bg-slate-700/50 transition-colors ${!n.read ? 'bg-rose-50/15 dark:bg-rose-900/10' : ''}`}>
                       <div className="flex items-start justify-between">
                         <span className={`text-[10px] font-bold uppercase ${n.type === 'emergency' ? 'text-rose-600' : n.type === 'warning' ? 'text-amber-600' : n.type === 'success' ? 'text-emerald-600' : 'text-slate-600'}`}>
                           {n.type}
@@ -186,16 +204,16 @@ export const Header: React.FC = () => {
                           <span>{n.time}</span>
                         </span>
                       </div>
-                      <h4 className="text-xs font-semibold text-slate-900 mt-1">{n.title}</h4>
-                      <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">{n.message}</p>
+                      <h4 className="text-xs font-semibold text-slate-900 dark:text-slate-100 mt-1">{n.title}</h4>
+                      <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 leading-relaxed">{n.message}</p>
                     </div>
                   ))
                 )}
               </div>
-              <div className="p-2 bg-slate-50 border-t border-slate-100 text-center">
+              <div className="p-2 bg-slate-50 dark:bg-slate-700/50 border-t border-slate-100 dark:border-slate-600 text-center">
                 <button 
                   onClick={() => { setNotifOpen(false); setPath('dashboard'); }}
-                  className="text-[10px] font-semibold text-rose-600 hover:text-rose-800 transition-colors"
+                  className="text-[10px] font-semibold text-rose-600 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300 transition-colors"
                 >
                   View Active Operations Dashboard
                 </button>

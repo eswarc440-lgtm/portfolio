@@ -163,24 +163,24 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
 
   return (
     <aside 
-      className={`bg-slate-50 border-r border-slate-200 h-screen sticky top-0 flex flex-col justify-between transition-all duration-300 z-30 ${collapsed ? 'w-16' : 'w-64'}`}
+      className={`bg-slate-50 dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700 h-screen sticky top-0 flex flex-col justify-between transition-all duration-300 z-30 ${collapsed ? 'w-16' : 'w-64'}`}
     >
       {/* Upper Logo Section */}
       <div>
-        <div className="flex items-center justify-between p-4 border-b border-slate-200">
+        <div className="flex items-center justify-between p-4 border-b border-slate-200 dark:border-slate-700">
           <div className="flex items-center space-x-2.5 overflow-hidden">
             <div className="p-1.5 bg-rose-600 text-white rounded-md flex-shrink-0 animate-pulse">
               <ShieldAlert className="h-5 w-5" />
             </div>
             {!collapsed && (
-              <span className="font-sans font-bold text-xs tracking-tight text-slate-900 uppercase">
+              <span className="font-sans font-bold text-xs tracking-tight text-slate-900 dark:text-slate-100 uppercase">
                 Smart Relief
               </span>
             )}
           </div>
           <button 
             onClick={() => setCollapsed(!collapsed)}
-            className="p-1 rounded-md text-slate-500 hover:bg-slate-100 hover:text-slate-800 focus:outline-none hidden md:block"
+            className="p-1 rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200 focus:outline-none hidden md:block"
           >
             {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
           </button>
@@ -203,12 +203,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
                 onClick={() => setPath(item.path)}
                 className={`w-full flex items-center space-x-3 p-2.5 rounded-lg text-left text-xs font-medium transition-all group ${
                   isActive 
-                    ? 'bg-rose-50 text-rose-700 shadow-sm border-l-2 border-rose-600' 
-                    : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 border-l-2 border-transparent'
+                    ? 'bg-rose-50 dark:bg-rose-900/20 text-rose-700 dark:text-rose-400 shadow-sm border-l-2 border-rose-600' 
+                    : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-slate-200 border-l-2 border-transparent'
                 }`}
                 title={collapsed ? item.label : undefined}
               >
-                <Icon className={`h-4.5 w-4.5 flex-shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'text-rose-600' : 'text-slate-500 group-hover:text-slate-700'}`} />
+                <Icon className={`h-4.5 w-4.5 flex-shrink-0 transition-transform group-hover:scale-105 ${isActive ? 'text-rose-600 dark:text-rose-400' : 'text-slate-500 dark:text-slate-500 group-hover:text-slate-700 dark:group-hover:text-slate-400'}`} />
                 {!collapsed && (
                   <span className="truncate">{item.label}</span>
                 )}
@@ -219,7 +219,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
       </div>
 
       {/* Footer Profile Section */}
-      <div className="p-3 border-t border-slate-200">
+      <div className="p-3 border-t border-slate-200 dark:border-slate-700">
         {!collapsed && currentUser && (() => {
           const getAvatarStyles = (role: string) => {
             switch (role) {
@@ -248,12 +248,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
           const hasImage = currentUser.avatar && !avatarError;
 
           return (
-            <div className="mb-3 px-2 py-1.5 bg-slate-100/70 rounded-lg flex items-center space-x-2.5">
+            <div className="mb-3 px-2 py-1.5 bg-slate-100/70 dark:bg-slate-800/50 rounded-lg flex items-center space-x-2.5">
               {hasImage ? (
                 <img
                   src={currentUser.avatar}
                   alt={currentUser.name}
-                  className="h-8 w-8 rounded-full border border-slate-200 object-cover shadow-sm flex-shrink-0"
+                  className="h-8 w-8 rounded-full border border-slate-200 dark:border-slate-600 object-cover shadow-sm flex-shrink-0"
                   onError={() => setAvatarError(true)}
                 />
               ) : (
@@ -262,8 +262,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
                 </div>
               )}
               <div className="overflow-hidden">
-                <h4 className="text-xs font-semibold text-slate-800 truncate">{currentUser.name}</h4>
-                <p className="text-[10px] text-slate-500 font-mono truncate">{currentUser.role}</p>
+                <h4 className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">{currentUser.name}</h4>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-mono truncate">{currentUser.role}</p>
               </div>
             </div>
           );
@@ -276,20 +276,20 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
             setSuccess(false);
             setIsEditProfileOpen(true);
           }}
-          className={`w-full flex items-center space-x-3 p-2.5 mb-1 rounded-lg text-left text-xs font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-colors ${collapsed ? 'justify-center' : ''}`}
+          className={`w-full flex items-center space-x-3 p-2.5 mb-1 rounded-lg text-left text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-800 dark:hover:text-slate-200 transition-colors ${collapsed ? 'justify-center' : ''}`}
           title={collapsed ? "Edit Profile" : undefined}
         >
-          <UserIcon className="h-4.5 w-4.5 text-slate-500 hover:text-slate-800" />
+          <UserIcon className="h-4.5 w-4.5 text-slate-500 dark:text-slate-500 hover:text-slate-800 dark:hover:text-slate-300" />
           {!collapsed && <span>Edit Profile</span>}
         </button>
 
         {/* Sign Out Button */}
         <button
           onClick={logout}
-          className={`w-full flex items-center space-x-3 p-2.5 rounded-lg text-left text-xs font-medium text-slate-600 hover:bg-rose-50 hover:text-rose-700 transition-colors ${collapsed ? 'justify-center' : ''}`}
+          className={`w-full flex items-center space-x-3 p-2.5 rounded-lg text-left text-xs font-medium text-slate-600 dark:text-slate-400 hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-700 dark:hover:text-rose-400 transition-colors ${collapsed ? 'justify-center' : ''}`}
           title={collapsed ? "Logout" : undefined}
         >
-          <LogOut className="h-4.5 w-4.5 text-slate-500 hover:text-rose-600" />
+          <LogOut className="h-4.5 w-4.5 text-slate-500 dark:text-slate-500 hover:text-rose-600 dark:hover:text-rose-400" />
           {!collapsed && <span>Sign Out</span>}
         </button>
       </div>
@@ -313,10 +313,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 15 }}
               transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-              className="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh]"
+              className="relative w-full max-w-lg bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden flex flex-col max-h-[90vh]"
             >
               {/* Header */}
-              <div className="bg-slate-900 px-6 py-4 text-white flex items-center justify-between">
+              <div className="bg-slate-900 dark:bg-slate-950 px-6 py-4 text-white flex items-center justify-between">
                 <div className="flex items-center space-x-2">
                   <div className="p-1.5 bg-rose-600 rounded-lg">
                     <UserIcon className="h-4.5 w-4.5 text-white" />
@@ -337,14 +337,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
               {/* Form Body */}
               <form onSubmit={handleSaveProfile} className="flex-1 overflow-y-auto p-6 space-y-5">
                 {success && (
-                  <div className="p-3 bg-emerald-50 text-emerald-800 border border-emerald-200 rounded-lg text-xs font-semibold flex items-center space-x-1.5 animate-in fade-in duration-200">
+                  <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800 rounded-lg text-xs font-semibold flex items-center space-x-1.5 animate-in fade-in duration-200">
                     <Check className="h-4 w-4" />
                     <span>Profile updated successfully. Your credentials are synchronized.</span>
                   </div>
                 )}
 
                 {error && (
-                  <div className="p-3 bg-rose-50 text-rose-800 border border-rose-200 rounded-lg text-xs font-semibold flex items-center space-x-1.5">
+                  <div className="p-3 bg-rose-50 dark:bg-rose-900/20 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800 rounded-lg text-xs font-semibold flex items-center space-x-1.5">
                     <AlertTriangle className="h-4 w-4" />
                     <span>{error}</span>
                   </div>
@@ -356,10 +356,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
                     Profile Picture / Avatar
                   </label>
                   
-                  <div className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-slate-50 rounded-xl border border-slate-200">
+                  <div className="flex flex-col sm:flex-row items-center gap-4 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-xl border border-slate-200 dark:border-slate-600">
                     {/* Live Preview Circle */}
                     <div className="relative group flex-shrink-0">
-                      <div className="h-20 w-20 rounded-full border-2 border-rose-500 bg-white shadow-md overflow-hidden flex items-center justify-center">
+                      <div className="h-20 w-20 rounded-full border-2 border-rose-500 bg-white dark:bg-slate-800 shadow-md overflow-hidden flex items-center justify-center">
                         {profileAvatar && !avatarError ? (
                           <img
                             src={profileAvatar}
@@ -368,7 +368,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
                             onError={() => setAvatarError(true)}
                           />
                         ) : (
-                          <div className="text-2xl font-black font-mono text-slate-400 uppercase">
+                          <div className="text-2xl font-black font-mono text-slate-400 dark:text-slate-500 uppercase">
                             {profileName ? profileName.substring(0, 2) : 'U'}
                           </div>
                         )}
@@ -396,8 +396,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
                       onDrop={handleDrop}
                       className={`flex-1 w-full border border-dashed rounded-lg p-4 text-center cursor-pointer transition-all ${
                         dragActive
-                          ? 'border-rose-500 bg-rose-50/50'
-                          : 'border-slate-300 hover:border-slate-400 bg-white'
+                          ? 'border-rose-500 bg-rose-50/50 dark:bg-rose-900/20'
+                          : 'border-slate-300 dark:border-slate-600 hover:border-slate-400 dark:hover:border-slate-500 bg-white dark:bg-slate-800'
                       }`}
                       onClick={() => fileInputRef.current?.click()}
                     >
@@ -408,11 +408,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
                         accept="image/*"
                         onChange={handleFileChange}
                       />
-                      <Upload className="h-5 w-5 mx-auto text-slate-400 mb-1" />
-                      <p className="text-xs font-semibold text-slate-700">
+                      <Upload className="h-5 w-5 mx-auto text-slate-400 dark:text-slate-500 mb-1" />
+                      <p className="text-xs font-semibold text-slate-700 dark:text-slate-300">
                         {dragActive ? 'Drop your image here' : 'Click to upload or drag & drop'}
                       </p>
-                      <p className="text-[9px] text-slate-400 font-mono mt-0.5">
+                      <p className="text-[9px] text-slate-400 dark:text-slate-500 font-mono mt-0.5">
                         Supports PNG, JPG or WEBP (Max 2MB)
                       </p>
                     </div>
@@ -420,7 +420,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
 
                   {/* Image URL Input as alternate */}
                   <div>
-                    <label className="block text-[9px] text-slate-400 font-mono uppercase mb-1">
+                    <label className="block text-[9px] text-slate-400 dark:text-slate-500 font-mono uppercase mb-1">
                       Or paste an external image URL
                     </label>
                     <input
@@ -431,7 +431,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
                         setAvatarError(false);
                       }}
                       placeholder="https://example.com/avatar.jpg"
-                      className="w-full px-3 py-1.5 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-rose-500 bg-white text-slate-800 font-sans"
+                      className="w-full px-3 py-1.5 text-xs border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-rose-500 dark:focus:border-rose-500 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-sans"
                     />
                   </div>
                 </div>
@@ -439,56 +439,56 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
                 {/* Profile Fields */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase font-mono tracking-wider mb-1.5">Full Name</label>
+                    <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase font-mono tracking-wider mb-1.5">Full Name</label>
                     <div className="relative">
-                      <UserIcon className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                      <UserIcon className="absolute left-3 top-2.5 h-4 w-4 text-slate-400 dark:text-slate-500" />
                       <input
                         type="text"
                         value={profileName}
                         onChange={(e) => setProfileName(e.target.value)}
                         placeholder="Enter full name"
-                        className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 bg-white text-slate-800 font-sans"
+                        className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-rose-500 dark:focus:border-rose-500 focus:ring-1 focus:ring-rose-500 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-sans"
                         required
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase font-mono tracking-wider mb-1.5">Email (Locked)</label>
+                    <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase font-mono tracking-wider mb-1.5">Email (Locked)</label>
                     <input
                       type="email"
                       value={currentUser?.email || ''}
                       disabled
-                      className="w-full px-3 py-2 text-xs border border-slate-200 rounded-lg bg-slate-50 text-slate-400 cursor-not-allowed font-mono"
+                      className="w-full px-3 py-2 text-xs border border-slate-200 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed font-mono"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase font-mono tracking-wider mb-1.5">Contact Number</label>
+                    <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase font-mono tracking-wider mb-1.5">Contact Number</label>
                     <div className="relative">
-                      <Phone className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                      <Phone className="absolute left-3 top-2.5 h-4 w-4 text-slate-400 dark:text-slate-500" />
                       <input
                         type="tel"
                         value={profilePhone}
                         onChange={(e) => setProfilePhone(e.target.value)}
                         placeholder="e.g. +1 555-019-2834"
-                        className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 bg-white text-slate-800 font-sans"
+                        className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-rose-500 dark:focus:border-rose-500 focus:ring-1 focus:ring-rose-500 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-sans"
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-bold text-slate-500 uppercase font-mono tracking-wider mb-1.5">Organization / Agency</label>
+                    <label className="block text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase font-mono tracking-wider mb-1.5">Organization / Agency</label>
                     <div className="relative">
-                      <Building className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                      <Building className="absolute left-3 top-2.5 h-4 w-4 text-slate-400 dark:text-slate-500" />
                       <input
                         type="text"
                         value={profileOrg}
                         onChange={(e) => setProfileOrg(e.target.value)}
                         placeholder="e.g. Red Cross Florida"
-                        className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 rounded-lg focus:outline-none focus:border-rose-500 focus:ring-1 focus:ring-rose-500 bg-white text-slate-800 font-sans"
+                        className="w-full pl-9 pr-3 py-2 text-xs border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:border-rose-500 dark:focus:border-rose-500 focus:ring-1 focus:ring-rose-500 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-sans"
                       />
                     </div>
                   </div>
@@ -496,16 +496,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, setCollapsed }) => 
               </form>
 
               {/* Footer */}
-              <div className="bg-slate-50 px-6 py-4 border-t border-slate-150 flex items-center justify-between">
-                <span className="text-[10px] text-slate-500 font-mono">
-                  Role: <span className="font-bold text-rose-600">{currentUser?.role}</span>
+              <div className="bg-slate-50 dark:bg-slate-700/50 px-6 py-4 border-t border-slate-150 dark:border-slate-600 flex items-center justify-between">
+                <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                  Role: <span className="font-bold text-rose-600 dark:text-rose-400">{currentUser?.role}</span>
                 </span>
                 
                 <div className="flex items-center space-x-2">
                   <button
                     type="button"
                     onClick={() => setIsEditProfileOpen(false)}
-                    className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                    className="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors cursor-pointer"
                   >
                     Cancel
                   </button>
