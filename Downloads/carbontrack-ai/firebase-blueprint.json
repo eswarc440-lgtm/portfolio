@@ -1,0 +1,98 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with gamification stats, role, and unlocked badges",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier for the user profile matching their authenticated UID" },
+        "email": { "type": "string", "description": "User email address" },
+        "name": { "type": "string", "description": "User full name or display name" },
+        "role": { "type": "string", "enum": ["USER", "ADMIN"], "description": "Platform role governing feature permissions" },
+        "organizationId": { "type": "string", "description": "Optional linked organization identifier" },
+        "organizationName": { "type": "string", "description": "Optional linked organization name" },
+        "department": { "type": "string", "description": "Linked company department" },
+        "createdAt": { "type": "string", "description": "Date of profile creation in YYYY-MM-DD format" },
+        "carbonScore": { "type": "number", "description": "Calculated score representing overall carbon friendliness" },
+        "totalXp": { "type": "number", "description": "Accumulated gamification XP" },
+        "currentStreak": { "type": "number", "description": "Sustained daily logging streak count" },
+        "badges": { "type": "array", "description": "Array of unique unlocked badge identifiers" },
+        "completedChallenges": { "type": "array", "description": "Array of unique completed challenge identifiers" }
+      },
+      "required": ["id", "email", "name", "role", "createdAt", "carbonScore", "totalXp", "currentStreak"]
+    },
+    "Activity": {
+      "title": "Activity",
+      "description": "Carbon footprint log entry representing a sustainable or carbon-emitting action",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique generated identifier for the activity document" },
+        "userId": { "type": "string", "description": "Owner user identifier" },
+        "userName": { "type": "string", "description": "Owner user display name" },
+        "userEmail": { "type": "string", "description": "Owner user email address" },
+        "category": { "type": "string", "enum": ["transport", "electricity", "food", "shopping", "travel", "waste"], "description": "Environmental sector category" },
+        "type": { "type": "string", "description": "Sub-type of activity determining carbon coefficient" },
+        "quantity": { "type": "number", "description": "Amount logged" },
+        "unit": { "type": "string", "description": "Unit of measurement associated with the activity type" },
+        "date": { "type": "string", "description": "Calendar log date in YYYY-MM-DD format" },
+        "emissions": { "type": "number", "description": "Calculated emissions in kg CO2e" },
+        "notes": { "type": "string", "description": "Optional administrator or user descriptive notes" },
+        "location": { "type": "string", "description": "Optional location name" },
+        "latitude": { "type": "number", "description": "Optional GPS latitude coordinate" },
+        "longitude": { "type": "number", "description": "Optional GPS longitude coordinate" }
+      },
+      "required": ["id", "userId", "category", "type", "quantity", "unit", "date", "emissions"]
+    },
+    "Goal": {
+      "title": "Goal",
+      "description": "Weekly or monthly carbon reduction target",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique generated identifier for the goal document" },
+        "userId": { "type": "string", "description": "Owner user identifier" },
+        "title": { "type": "string", "description": "Goal descriptive title" },
+        "category": { "type": "string", "description": "Activity category or 'all' for general limits" },
+        "targetReductionPercent": { "type": "number", "description": "Percentage reduction objective" },
+        "startCarbonValue": { "type": "number", "description": "Baseline emissions level" },
+        "currentCarbonValue": { "type": "number", "description": "Current computed emissions level" },
+        "deadline": { "type": "string", "description": "Goal end date in YYYY-MM-DD format" },
+        "progress": { "type": "number", "description": "Current goal completion progress percentage" },
+        "createdAt": { "type": "string", "description": "Creation date in YYYY-MM-DD format" },
+        "status": { "type": "string", "enum": ["active", "completed", "failed"], "description": "Goal active status" }
+      },
+      "required": ["id", "userId", "title", "category", "targetReductionPercent", "deadline", "createdAt", "status"]
+    },
+    "EmissionFactor": {
+      "title": "EmissionFactor",
+      "description": "Administrator defined carbon coefficient overrides",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique generated factor ID" },
+        "category": { "type": "string", "description": "Sector category" },
+        "type": { "type": "string", "description": "Factor identifier name" },
+        "factor": { "type": "number", "description": "CO2 emissions in kg per unit" },
+        "unit": { "type": "string", "description": "Unit of measurement" },
+        "description": { "type": "string", "description": "Coefficient source or description context" }
+      },
+      "required": ["id", "category", "type", "factor", "unit"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Profiles holding user scores, streak milestones, and permissions"
+    },
+    "/activities/{activityId}": {
+      "schema": "Activity",
+      "description": "Logged emissions logs representing user footprint inputs"
+    },
+    "/goals/{goalId}": {
+      "schema": "Goal",
+      "description": "Carbon reduction target boundaries"
+    },
+    "/emissionFactors/{factorId}": {
+      "schema": "EmissionFactor",
+      "description": "Custom ESG coefficients created and updated by administrative personnel"
+    }
+  }
+}

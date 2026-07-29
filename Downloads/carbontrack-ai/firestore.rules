@@ -1,0 +1,123 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Global Safety Net (Default Deny)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // --- Hardened Security Primitives & Helper Functions ---
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // Check if the current user is an administrator
+    function isAdmin() {
+      return isSignedIn() && (
+        request.auth.token.email == 'eswarc440@gmail.com' ||
+        (exists(/databases/$(database)/documents/users/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'ADMIN')
+      );
+    }
+
+    // --- Validation Blueprints ---
+
+    function isValidUserProfile(data) {
+      return data.id == request.auth.uid &&
+             data.email is string && data.email.size() <= 200 &&
+             data.name is string && data.name.size() <= 100 &&
+             data.role in ['USER', 'ADMIN'] &&
+             data.carbonScore is number &&
+             data.totalXp is number &&
+             data.currentStreak is number;
+    }
+
+    function isValidActivity(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.userId == request.auth.uid &&
+             data.category in ['transport', 'electricity', 'food', 'shopping', 'travel', 'waste'] &&
+             data.type is string && data.type.size() <= 100 &&
+             data.quantity is number && data.quantity >= 0 &&
+             data.unit is string && data.unit.size() <= 50 &&
+             data.date is string && data.date.size() == 10 &&
+             data.emissions is number && data.emissions >= 0;
+    }
+
+    function isValidGoal(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.userId == request.auth.uid &&
+             data.title is string && data.title.size() <= 200 &&
+             data.category is string && data.category.size() <= 50 &&
+             data.targetReductionPercent is number && data.targetReductionPercent >= 0 &&
+             data.deadline is string && data.deadline.size() == 10 &&
+             data.createdAt is string && data.createdAt.size() == 10 &&
+             data.status in ['active', 'completed', 'failed'];
+    }
+
+    function isValidEmissionFactor(data) {
+      return data.id is string && data.id.size() <= 128 &&
+             data.category is string && data.category.size() <= 50 &&
+             data.type is string && data.type.size() <= 100 &&
+             data.factor is number && data.factor >= 0 &&
+             data.unit is string && data.unit.size() <= 50;
+    }
+
+    // --- Match Blocks for Collections ---
+
+    // 1. Users collection rules
+    match /users/{userId} {
+      allow get: if isSignedIn();
+      allow list: if isSignedIn(); // allow listing profiles to render leaderboard rankings
+      allow create: if isOwner(userId) && isValidUserProfile(incoming());
+      allow update: if isOwner(userId) && isValidUserProfile(incoming()) && (
+        // Protect role field against self-elevation
+        (incoming().role == existing().role) || isAdmin()
+      );
+      allow delete: if isAdmin();
+    }
+
+    // 2. Activities collection rules
+    match /activities/{activityId} {
+      allow read: if isSignedIn(); // allow reading for shared dashboards or organizational aggregations
+      allow create: if isSignedIn() && isValidId(activityId) && isValidActivity(incoming());
+      allow update: if isSignedIn() && isOwner(existing().userId) && isValidActivity(incoming()) && (
+        incoming().userId == existing().userId
+      );
+      allow delete: if isSignedIn() && isOwner(existing().userId);
+    }
+
+    // 3. Goals collection rules
+    match /goals/{goalId} {
+      allow read: if isSignedIn() && isOwner(existing().userId);
+      allow create: if isSignedIn() && isValidId(goalId) && isValidGoal(incoming());
+      allow update: if isSignedIn() && isOwner(existing().userId) && isValidGoal(incoming()) && (
+        incoming().userId == existing().userId
+      );
+      allow delete: if isSignedIn() && isOwner(existing().userId);
+    }
+
+    // 4. Emission Factors collection rules
+    match /emissionFactors/{factorId} {
+      allow read: if isSignedIn(); // Any authenticated user can read standard/custom coefficients
+      allow create, update, delete: if isAdmin() && isValidId(factorId) && (request.method == 'delete' || isValidEmissionFactor(incoming()));
+    }
+  }
+}
