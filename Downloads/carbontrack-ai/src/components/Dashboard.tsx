@@ -341,10 +341,10 @@ export default function Dashboard({ userProfile, activities, onAddActivity, onNa
           <p className="text-xs text-emerald-100/90 leading-relaxed max-w-2xl">{aiInsight.body}</p>
         </div>
         <button
-          onClick={() => onNavigateToTab('assistant')}
-          className="px-5 py-3 bg-white text-emerald-900 text-xs font-bold rounded-xl hover:bg-emerald-50 flex items-center space-x-1 shadow-sm shrink-0 relative z-10 transition-colors"
+          onClick={() => onNavigateToTab('recommendations')}
+          className="px-5 py-3 bg-white text-emerald-900 text-xs font-bold rounded-xl hover:bg-emerald-50 flex items-center space-x-1 shadow-sm shrink-0 relative z-10 transition-colors cursor-pointer"
         >
-          <span>Consult AI Assistant</span>
+          <span>Explore AI Recommendations</span>
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>

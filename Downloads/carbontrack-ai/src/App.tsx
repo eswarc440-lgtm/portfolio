@@ -28,6 +28,8 @@ import Reports from './components/Reports';
 import AdminDashboard from './components/AdminDashboard';
 import Settings from './components/Settings';
 import NotificationCenter from './components/NotificationCenter';
+import Recommendations from './components/Recommendations';
+import RecommendationTracker from './components/RecommendationTracker';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState<string>('landing');
@@ -40,6 +42,7 @@ export default function App() {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [challenges, setChallenges] = useState<Challenge[]>(DEFAULT_CHALLENGES);
   const [emissionFactors, setEmissionFactors] = useState<EmissionFactor[]>(DEFAULT_EMISSION_FACTORS);
+  const [appliedRecommendations, setAppliedRecommendations] = useState<any[]>([]);
 
   // UI layout states
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -547,7 +550,46 @@ export default function App() {
           />
         );
       case 'leaderboard':
-        return <Leaderboard userProfile={userProfile} />;
+        return <Leaderboard userProfile={userProfile} activities={activities} />;
+      case 'recommendations':
+        return (
+          <div className="space-y-8">
+            <Recommendations 
+              activities={activities} 
+              userProfile={userProfile} 
+              onApplyRecommendationAsGoal={(title, category, reductionTarget) => {
+                handleAddGoal({
+                  title,
+                  category,
+                  targetReductionPercent: reductionTarget,
+                  startCarbonValue: 120,
+                  currentCarbonValue: 80,
+                  deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]
+                });
+                addToast("Goal Adopted! 🎯", "success", `Added "${title}" to active drills.`, 4000);
+              }}
+              onLogRecommendationAction={(category, type, saved) => {
+                handleAddActivity({
+                  category,
+                  type,
+                  quantity: 1,
+                  unit: 'action',
+                  date: new Date().toISOString().split('T')[0],
+                  emissions: Math.max(1, Math.round(saved / 4)),
+                  notes: `Recommendation implemented: ${type}`
+                });
+                addToast("Action Logged! 🌱", "success", `Logged recommendation action (-${saved} kg CO₂e).`, 4000);
+              }}
+            />
+            <RecommendationTracker
+              appliedRecommendations={appliedRecommendations}
+              activities={activities}
+              onCompleteRecommendation={(recId) => {
+                addToast("Recommendation Completed! 🏆", "success", "Great job implementing this carbon reduction strategy!");
+              }}
+            />
+          </div>
+        );
       case 'reports':
         return <Reports activities={activities} />;
       case 'admin':
@@ -626,10 +668,11 @@ export default function App() {
           <nav className="p-3 space-y-1">
             {[
               { id: 'dashboard', label: 'Console Hub', icon: <LayoutDashboard className="w-4 h-4" /> },
+              { id: 'recommendations', label: 'AI Recommendations', icon: <Sparkles className="w-4 h-4 text-emerald-600" /> },
               { id: 'log', label: 'Log Emissions', icon: <CalendarPlus className="w-4 h-4" /> },
               { id: 'map', label: 'GIS Overlays', icon: <Map className="w-4 h-4" /> },
               { id: 'goals', label: 'Eco Drills', icon: <Target className="w-4 h-4" /> },
-              { id: 'leaderboard', label: 'Office Ranks', icon: <Award className="w-4 h-4" /> },
+              { id: 'leaderboard', label: 'Leaderboard', icon: <Award className="w-4 h-4" /> },
               { id: 'reports', label: 'ESG Audits', icon: <FileSpreadsheet className="w-4 h-4" /> }
             ].map((item) => (
               <button

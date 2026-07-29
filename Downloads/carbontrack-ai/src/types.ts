@@ -117,3 +117,18 @@ export interface Toast {
   type: 'success' | 'warning' | 'info' | 'error';
   duration?: number;
 }
+
+export interface Recommendation {
+  id: string;
+  title: string;
+  category: ActivityCategory | 'general';
+  impactLevel: 'High Impact' | 'Quick Win' | 'Habit Shift' | 'Strategic';
+  estimatedCo2SavedKg: number;
+  difficulty: 'Easy' | 'Medium' | 'Hard';
+  timeframe: 'Immediate' | '1 Week' | '1 Month';
+  description: string;
+  actionableSteps: string[];
+  tags: string[];
+  applied?: boolean;
+}
+
