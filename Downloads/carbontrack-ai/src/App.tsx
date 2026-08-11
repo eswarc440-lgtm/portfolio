@@ -8,7 +8,8 @@ import {
 import { 
   Leaf, LayoutDashboard, CalendarPlus, Map, Sparkles, Target, 
   Award, FileSpreadsheet, User, Settings as SettingsIcon, LogOut, ShieldAlert,
-  ChevronLeft, ChevronRight, Menu, Bell, Search, Compass, Globe, CheckCircle2
+  ChevronLeft, ChevronRight, Menu, Bell, Search, Compass, Globe, CheckCircle2,
+  DollarSign, BarChart3, Users, FileText
 } from 'lucide-react';
 
 import { auth, db } from './firebase';
@@ -30,6 +31,10 @@ import Settings from './components/Settings';
 import NotificationCenter from './components/NotificationCenter';
 import Recommendations from './components/Recommendations';
 import RecommendationTracker from './components/RecommendationTracker';
+import CarbonBudgetTracker from './components/CarbonBudgetTracker';
+import AdvancedAnalytics from './components/AdvancedAnalytics';
+import OrganizationUsers from './components/OrganizationUsers';
+import ESGReportGenerator from './components/ESGReportGenerator';
 
 export default function App() {
   const [currentTab, setCurrentTab] = useState<string>('landing');
@@ -592,6 +597,14 @@ export default function App() {
         );
       case 'reports':
         return <Reports activities={activities} />;
+      case 'budget':
+        return <CarbonBudgetTracker activities={activities} userProfile={userProfile} />;
+      case 'analytics':
+        return <AdvancedAnalytics activities={activities} userProfile={userProfile} />;
+      case 'users':
+        return <OrganizationUsers currentUser={currentUser} />;
+      case 'esg-reports':
+        return <ESGReportGenerator activities={activities} userProfile={userProfile} />;
       case 'admin':
         return (
           <AdminDashboard 
@@ -673,7 +686,11 @@ export default function App() {
               { id: 'map', label: 'GIS Overlays', icon: <Map className="w-4 h-4" /> },
               { id: 'goals', label: 'Eco Drills', icon: <Target className="w-4 h-4" /> },
               { id: 'leaderboard', label: 'Leaderboard', icon: <Award className="w-4 h-4" /> },
-              { id: 'reports', label: 'ESG Audits', icon: <FileSpreadsheet className="w-4 h-4" /> }
+              { id: 'reports', label: 'ESG Audits', icon: <FileSpreadsheet className="w-4 h-4" /> },
+              { id: 'budget', label: 'Carbon Budget', icon: <DollarSign className="w-4 h-4" /> },
+              { id: 'analytics', label: 'Advanced Analytics', icon: <BarChart3 className="w-4 h-4" /> },
+              { id: 'users', label: 'Organization Users', icon: <Users className="w-4 h-4" /> },
+              { id: 'esg-reports', label: 'ESG Reports', icon: <FileText className="w-4 h-4" /> }
             ].map((item) => (
               <button
                 key={item.id}
