@@ -1,0 +1,23 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 20
+    commands:
+      - echo "Installing app dependencies..."
+      - npm install --no-fund --no-audit
+
+  build:
+    commands:
+      - echo "Building production bundle..."
+      - npm run build
+
+artifacts:
+  files:
+    - '**/*'
+  exclude-paths:
+    - node_modules/**
+    - .git/**
+    - .github/**
+    - .vscode/**
