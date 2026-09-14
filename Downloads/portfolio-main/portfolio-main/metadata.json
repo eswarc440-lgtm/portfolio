@@ -1,0 +1,6 @@
+{
+  "name": "Eswar Portfolio",
+  "description": "Portfolio of Eswar, a Computer Science Engineering student focused on DevOps, AWS, Cloud Engineering, CI/CD, AI, Machine Learning and Digital Twin systems.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

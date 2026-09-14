@@ -1,0 +1,88 @@
+import { SkillCategory } from '../types';
+
+export const skillCategories: SkillCategory[] = [
+  {
+    title: 'Cloud & DevOps',
+    description: 'Infrastructure automation, container orchestration, and automated deployment pipelines.',
+    iconName: 'Cloud',
+    skills: [
+      'AWS',
+      'EC2',
+      'S3',
+      'CodePipeline',
+      'CodeBuild',
+      'CodeDeploy',
+      'Docker',
+      'Docker Compose',
+      'CI/CD',
+      'Nginx',
+    ],
+  },
+  {
+    title: 'Development',
+    description: 'Modern full-stack application development, API architecture, and asynchronous services.',
+    iconName: 'Code2',
+    skills: [
+      'Python',
+      'Java',
+      'JavaScript',
+      'TypeScript',
+      'React',
+      'FastAPI',
+      'REST APIs',
+    ],
+  },
+  {
+    title: 'Database & Data',
+    description: 'Relational databases, spatial querying, ETL workflows, and structured tabular analytics.',
+    iconName: 'Database',
+    skills: [
+      'PostgreSQL',
+      'PostGIS',
+      'SQL',
+      'Pandas',
+      'NumPy',
+      'CSV',
+      'JSON',
+    ],
+  },
+  {
+    title: 'GIS & Digital Twin',
+    description: 'Geospatial intelligence, asset coordinates mapping, and 3D spatial simulation.',
+    iconName: 'Globe',
+    skills: [
+      'QGIS',
+      'Leaflet',
+      'OpenStreetMap',
+      'Three.js',
+      'CesiumJS',
+    ],
+  },
+  {
+    title: 'Machine Learning',
+    description: 'Predictive modeling, deterioration risk pipelines, and evidence-gated evaluations.',
+    iconName: 'Cpu',
+    skills: [
+      'Scikit-learn',
+      'Classification',
+      'Regression',
+      'ML Pipelines',
+      'Model Evaluation',
+    ],
+  },
+  {
+    title: 'Tools & Systems',
+    description: 'Developer environments, version control, terminal scripting, and container tools.',
+    iconName: 'Terminal',
+    skills: [
+      'Git',
+      'GitHub',
+      'Linux',
+      'Ubuntu',
+      'PowerShell',
+      'VS Code',
+      'Postman',
+      'Docker Desktop',
+    ],
+  },
+];
