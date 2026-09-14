@@ -11,11 +11,16 @@ export default function CloudServices() {
   const [isTyping, setIsTyping] = useState<boolean>(false);
 
   // Endpoint URLs - Replace with your actual AWS API endpoints
-  const VIEW_COUNTER_API = "https://amazonaws.com";
-  const CHATBOT_API = "https://amazonaws.com";
+  const VIEW_COUNTER_API = process.env.VITE_VIEW_COUNTER_API || "";
+  const CHATBOT_API = process.env.VITE_CHATBOT_API || "";
 
   // Fetch real-time views from DynamoDB via Lambda on mount
   useEffect(() => {
+    if (!VIEW_COUNTER_API) {
+      setViews("Demo Mode");
+      return;
+    }
+    
     fetch(VIEW_COUNTER_API)
       .then(res => res.json())
       .then(data => setViews(data.views))
@@ -36,6 +41,18 @@ export default function CloudServices() {
     setIsTyping(true);
 
     try {
+      if (!CHATBOT_API) {
+        // Demo mode response
+        setTimeout(() => {
+          setChatHistory(prev => [...prev, { 
+            sender: 'ai', 
+            text: "This is a demo response. Please configure your AWS API endpoints in environment variables to enable the actual Amazon Nova AI assistant." 
+          }]);
+          setIsTyping(false);
+        }, 1000);
+        return;
+      }
+
       const response = await fetch(CHATBOT_API, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
