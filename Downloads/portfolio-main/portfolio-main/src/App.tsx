@@ -11,6 +11,7 @@ import { Interests } from './components/Interests';
 import { Contact } from './components/Contact';
 import { Footer } from './components/Footer';
 import { ResumeModal } from './components/ResumeModal';
+import CloudServices from './components/CloudServices';
 
 export default function App() {
   const [darkMode, setDarkMode] = useState<boolean>(() => {
@@ -70,6 +71,9 @@ export default function App() {
         isOpen={isResumeOpen}
         onClose={() => setIsResumeOpen(false)}
       />
+
+      {/* Cloud Services - View Counter & AI Chatbot */}
+      <CloudServices />
     </div>
   );
 }
